@@ -80,6 +80,24 @@ public:
             prop->update(deltaTime);
     }
 
+    void reset() {
+        position = glm::vec3(0.0f);
+        rotation = glm::quat(glm::vec3(0.0f));
+        velocity = glm::vec3(0.0f);
+        angularVelocity = glm::vec3(1e-6f);
+
+        for (int i = 0; i < 4 && i < propellers.size(); ++i) {
+            propellers[i]->setTargetThrust(0);
+        }
+
+        mesh->setPosition(position);
+        mesh->setRotation(rotation);
+        collider->updateBounds(*mesh);
+        
+        for (auto& prop : propellers)
+            prop->update(0.0f);
+    }
+
 
     void render(Shader shader) {
         mesh->render(shader);

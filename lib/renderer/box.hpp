@@ -4,8 +4,11 @@
 
 class Box : public Mesh {
 public:
+    glm::vec3 min;
+    glm::vec3 max;
+
     Box(const glm::vec3& min, const glm::vec3& max, const glm::vec4& _color = glm::vec4(1.0f))
-        : Mesh(nullptr)
+        : min(min), max(max), Mesh(nullptr)
     {
         float vertices[] {
             min.x, min.y, max.z, 0.0f, 0.0f,  0.0f,  0.0f,  1.0f,
