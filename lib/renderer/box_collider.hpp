@@ -73,7 +73,7 @@ public:
                  max.z < other.min.z || min.z > other.max.z);
     }
 
-    void render(Shader shader) {
+    void render(Shader shader, int mode = GL_LINE) {
         boundingBox->render(shader, GL_LINE);
     }
 

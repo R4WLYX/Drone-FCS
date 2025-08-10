@@ -1,14 +1,14 @@
 #pragma once
 
 #include "mesh.hpp"
-#include "sphere_collider.hpp"
+#include "box_collider.hpp"
 
 #include "propeller.hpp"
 
 class Drone {
 public:
     std::unique_ptr<Mesh> mesh;
-    std::unique_ptr<SphereCollider> collider;
+    std::unique_ptr<BoxCollider> collider;
 
     glm::vec3 position;
     glm::quat rotation;
@@ -25,12 +25,13 @@ public:
         mesh->setPosition(_position);
         mesh->setRotation(_rotation);
         mesh->setColor(_color);
-        collider = std::make_unique<SphereCollider>(*mesh);
+        collider = std::make_unique<BoxCollider>(*mesh);
 
         velocity = glm::vec3(0.0f);
         angularVelocity = glm::vec3(1e-6f);
 
-        float radius = collider->radius;
+        glm::vec3 halfExtents = (collider->max - collider->min) * 0.5f;
+        float radius = glm::compMax(halfExtents);
         float I = 0.4f * mass * radius * radius;
         inertia = glm::vec3(I);
 
@@ -85,9 +86,7 @@ public:
         for (int i = 0; i < propellers.size(); ++i)
             propellers[i]->render(shader);
         
-        #ifdef DEBUG_MODE
-            collider->render(shader);
-        #endif
+        collider->render(shader);
     }
 
     void setPropellerThrusts(const std::array<float, 4>& thrusts) {

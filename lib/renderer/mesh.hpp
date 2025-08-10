@@ -179,13 +179,24 @@ public:
         updateModelMatrix();
     }
 
+    void flipNormals() {
+        for (int i = 0; i < vertices.size(); i += VERTEX_WIDTH) {
+            vertices[i + 5] = -vertices[i + 5];
+            vertices[i + 6] = -vertices[i + 6];
+            vertices[i + 7] = -vertices[i + 7];
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), vertices.data());
+    }
+
     std::pair<glm::vec3, glm::vec3> getBounds() const {
         if (!vertices.size()) return {glm::vec3(0.0f), glm::vec3(0.0f)};
 
         glm::vec3 minPos(vertices[0], vertices[1], vertices[2]);
         glm::vec3 maxPos = minPos;
 
-        for (unsigned int i = 0; i < vertices.size(); i += VERTEX_WIDTH) {
+        for (int i = 0; i < vertices.size(); i += VERTEX_WIDTH) {
             glm::vec3 pos(vertices[i], vertices[i + 1], vertices[i + 2]);
 
             minPos = glm::min(minPos, pos);

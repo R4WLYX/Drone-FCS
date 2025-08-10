@@ -92,7 +92,7 @@ public:
 
             callback(deltaTime);
             
-            // std::cout << '\r' << "FPS -- " << 1.0f/deltaTime << std::flush;
+            std::cout << '\r' << "FPS -- " << 1.0f/deltaTime << std::flush;
 
             glfwSwapBuffers(window);
             T0 = T1;
