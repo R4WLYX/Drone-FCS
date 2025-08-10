@@ -13,10 +13,15 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include "shader.hpp"
 
 #define VERTEX_WIDTH 8
+
+#ifndef INSTANCE_COUNT
+    #define INSTANCE_COUNT 128
+#endif
 
 class Mesh {
 public:
@@ -36,7 +41,7 @@ public:
     glm::mat4 model;
 
     Mesh(float _vertices[], unsigned int _vertexCount, unsigned int _indices[], unsigned int _indexCount)
-       : position(glm::vec3(0.0f)), rotation(glm::vec3(0.0f)), scale(glm::vec3(1.0f)), color(glm::vec4(1.0f))
+       : position(glm::vec3(0.0f)), rotation(glm::vec3(0.0f)), scale(glm::vec3(1.0f)), color(glm::vec4(1.0f)), cachedModelCount(0)
     {
         loadMeshData(_vertices, _vertexCount, _indices, _indexCount);
         centerOrigin();
@@ -46,7 +51,7 @@ public:
     
     Mesh(const char *model_file, const glm::vec3& _position, const glm::vec3& _rotation,
          const glm::vec3& _scale, const glm::vec4& _color)
-       : position(_position), rotation(_rotation), scale(_scale), color(_color)
+       : position(_position), rotation(_rotation), scale(_scale), color(_color), cachedModelCount(0)
     {
         parseOBJ(model_file);
         centerOrigin();
@@ -219,14 +224,53 @@ public:
     void render(Shader shader, int mode = GL_FILL) {
         glPolygonMode(GL_FRONT_AND_BACK, mode);
         shader.bind();
-        shader.setUniformMat4f("model", model);
         shader.setUniform4f("objectColor", color);
+        shader.setUniformMat4f("models[0]", model);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+        glBindVertexArray(0);
+    }
+
+    void renderInstanced(Shader& shader, const std::vector<glm::mat4>& models, int mode = GL_FILL) {
+        if (models.size() != cachedModelCount) {
+            setInstanceModels(models);
+            cacheUniformLocations(shader);
+            cachedModelCount = models.size();
+        }
+
+        glPolygonMode(GL_FRONT_AND_BACK, mode);
+        shader.bind();
+        glBindVertexArray(vao);
+        shader.setUniform4f("objectColor", color);
+        for (const auto& chunkModels : splitModels) {
+            shader.setUniformMat4fArray("models", &chunkModels[0], chunkModels.size());
+            glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr, chunkModels.size());
+        }
+        glBindVertexArray(0);
     }
 
 protected:
     unsigned int vao, vbo, ibo;
+
+    std::vector<std::vector<glm::mat4>> splitModels;
+    unsigned int cachedModelCount;
+    std::vector<std::string> uniformLocations;
+
+    void setInstanceModels(const std::vector<glm::mat4>& models) {
+        splitModels.clear();
+        splitModels.reserve((models.size() + INSTANCE_COUNT - 1) / INSTANCE_COUNT);
+
+        for (std::size_t i = 0; i < models.size(); i += INSTANCE_COUNT) {
+            auto last = std::min(models.size(), i + INSTANCE_COUNT);
+            splitModels.emplace_back(models.begin() + i, models.begin() + last);
+        }
+    }
+
+    void cacheUniformLocations(Shader shader) {
+        uniformLocations.resize(INSTANCE_COUNT);
+        for (int i = 0; i < INSTANCE_COUNT; i++)
+            uniformLocations[i] = "models[" + std::to_string(i) + "]";
+    }
 
     void updateDirectionVectors() {
         glm::vec3 localFront = glm::vec3(0.0f, 0.0f, -1.0f);

@@ -127,6 +127,9 @@ public:
     void setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
         glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
     }
+    void setUniformMat4fArray(const std::string& name, const glm::mat4* matrices, size_t count) {
+        glUniformMatrix4fv(getUniformLocation(name), static_cast<GLsizei>(count), GL_FALSE, &matrices[0][0][0]);
+    }
     
     int getUniformLocation(const std::string& name) {
         if (uniformLocationCache.find(name) != uniformLocationCache.end())
