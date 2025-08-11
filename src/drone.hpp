@@ -42,7 +42,7 @@ public:
         glm::vec3 netForce(0.0f);
         glm::vec3 netTorque(0.0f);
 
-        const float maxThrust = 10.0f;
+        const float maxThrust = 24.0f;
         const float spinTorqueScale = 0.1f;
 
         for (auto& prop : propellers) {
@@ -106,7 +106,7 @@ public:
         #endif
     }
 
-    void setPropellerThrusts(const std::array<float, 4>& thrusts) {
+    void setPropellerThrusts(const std::vector<float>& thrusts) {
         for (int i = 0; i < 4 && i < propellers.size(); ++i) {
             propellers[i]->setTargetThrust(thrusts[i]);
         }

@@ -89,10 +89,10 @@ public:
             glClearColor(0.1f, 0.1f, 0.12f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glfwPollEvents();
+            
+            // std::cout << "\rFPS -- " << 1.0f / deltaTime << std::flush;
 
             callback(deltaTime);
-            
-            std::cout << '\r' << "FPS -- " << 1.0f/deltaTime << std::flush;
 
             glfwSwapBuffers(window);
             T0 = T1;
