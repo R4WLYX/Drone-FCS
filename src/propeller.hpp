@@ -55,6 +55,20 @@ public:
         mesh->setPosition(worldPos);
     }
 
+    void reset() {
+        spinAngle = 0.0f;
+        targetThrust = 0.0f;
+        thrust = 0.0f;
+
+        glm::quat spinRot = glm::angleAxis(spinAngle, droneMesh->up);
+        glm::quat worldRot = droneMesh->rotation * relRot;
+        glm::vec3 worldPos = droneMesh->position + droneMesh->rotation * relPos;
+
+        mesh->setRotation(worldRot);
+        mesh->rotate(spinRot);
+        mesh->setPosition(worldPos);
+    }
+
     void render (Shader shader) {
         mesh->render(shader);
     }

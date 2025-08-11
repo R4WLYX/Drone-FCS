@@ -94,9 +94,8 @@ public:
         mesh->setRotation(rotation);
         collider->updateBounds(*mesh);
         
-        setPropellerThrusts({0.0f, 0.0f, 0.0f, 0.0f});
         for (auto& prop : propellers)
-            prop->update(0.0f);
+            prop->reset();
     }
 
 
