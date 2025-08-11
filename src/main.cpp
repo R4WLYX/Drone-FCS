@@ -2,8 +2,6 @@
 #include "shader.hpp"
 #include "camera.hpp"
 
-#define DEBUG_MODE
-
 #include "simulation.hpp"
 
 int main() {
@@ -16,12 +14,10 @@ int main() {
     glm::mat4 proj = glm::perspective(70.0f, app.getAspectRatio(), 1.0f, 3.0f);
     camera.setInputMode(window);
 
-    std::vector<std::unique_ptr<Simulation>> simulations;
-    for (int i = 0; i < 1000; i++)
-        simulations.push_back(std::make_unique<Simulation>(glm::vec3(-250.0f), glm::vec3(250.0f), 25.0f, 50.0f, 512));
+    Simulation sim(glm::vec3(-250.0f), glm::vec3(250.0f), 25.0f, 50.0f, 512, 100);
 
     Box box(glm::vec3(-5.0f), glm::vec3(5.0f));
-    // box.translate(glm::vec3(100.0f, 50.0f, 0.0f));
+    box.translate({0.0f,    50.0f, 0.0f});
     box.setColor({1.0f, 0.0f, 0.0f, 0.2f});
 
     shader.bind();
@@ -34,10 +30,8 @@ int main() {
         shader.setUniform3f("lightPos", {0.0f, 80.0f, 0.0f});
         shader.setUniform3f("viewPos", camera.position);
 
-        for (const auto& sim : simulations) {
-            sim->update(deltaTime, glm::vec3(0.0f));
-            sim->render(shader);
-        }
+        sim.update(deltaTime, {0.0f, 50.0f, 0.0f});
+        sim.render(shader);
 
         box.render(shader);
     });
