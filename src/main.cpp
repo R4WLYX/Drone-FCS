@@ -24,7 +24,7 @@ int main() {
         camera.processMouse(window, deltaTime);
         camera.setUniforms(shader, proj);
 
-        shader.setUniform3f("lightColor", {0.8f, 0.8f, 1.0f});
+        shader.setUniform3f("lightColor", {0.96f, 0.98f, 1.0f});
         shader.setUniform3f("lightPos", {0.0f, 80.0f, 0.0f});
         shader.setUniform3f("viewPos", camera.position);
 
