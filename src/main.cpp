@@ -25,7 +25,7 @@ int main() {
         camera.setUniforms(shader, proj);
 
         shader.setUniform3f("lightColor", glm::vec3(1.0f));
-        shader.setUniform3f("lightPos", glm::vec3(0.0f, 80.0f, -25.0f));
+        shader.setUniform3f("lightPos", glm::vec3(0.0f));
         shader.setUniform3f("viewPos", camera.position);
 
         sim.update(deltaTime);
