@@ -12,9 +12,9 @@ public:
 
     glm::vec3 position;
     glm::quat rotation;
-
     glm::vec3 velocity;
-    glm::vec3 angularVelocity;
+    glm::quat angularVelocity;
+
     glm::vec3 inertia;
 
     Drone(const glm::vec3& _position, const glm::quat _rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
@@ -28,7 +28,7 @@ public:
         collider = std::make_unique<BoxCollider>(*mesh);
 
         velocity = glm::vec3(0.0f);
-        angularVelocity = glm::vec3(1e-6f);
+        angularVelocity = glm::quat(glm::vec4(0.0f));
 
         glm::vec3 halfExtents = (collider->max - collider->min) * 0.5f;
         float radius = glm::compMax(halfExtents);
@@ -62,15 +62,12 @@ public:
         velocity *= 0.98f;
         position += velocity * deltaTime;
         
-        glm::vec3 angularAccel = netTorque / inertia;
+        glm::quat angularAccel = glm::quat(0.0f, netTorque / inertia);
         angularVelocity += angularAccel * deltaTime;
-        angularVelocity *= 0.98f;
+        angularVelocity = glm::normalize(angularVelocity * 0.98f);
         
-        float angularSpeed = glm::length(angularVelocity);
-        glm::vec3 axis = glm::normalize(angularVelocity);
-        float angle = angularSpeed * deltaTime;
-        glm::quat deltaRot = glm::angleAxis(angle, axis);
-        rotation = glm::normalize(deltaRot * rotation);
+        glm::quat deltaRot = 0.5f * angularVelocity * rotation * deltaTime;
+        rotation = glm::normalize(deltaRot + rotation);
         
         mesh->setPosition(position);
         mesh->setRotation(rotation);
@@ -84,7 +81,7 @@ public:
         position = glm::vec3(0.0f);
         rotation = glm::quat(glm::vec3(0.0f));
         velocity = glm::vec3(0.0f);
-        angularVelocity = glm::vec3(1e-6f);
+        angularVelocity = glm::quat(glm::vec4(0.0f));
 
         for (int i = 0; i < 4 && i < propellers.size(); ++i) {
             propellers[i]->setTargetThrust(0);
