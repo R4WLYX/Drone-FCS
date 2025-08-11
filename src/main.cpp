@@ -2,6 +2,8 @@
 #include "shader.hpp"
 #include "camera.hpp"
 
+#define DEBUG_MODE
+
 #include "simulation.hpp"
 
 int main() {

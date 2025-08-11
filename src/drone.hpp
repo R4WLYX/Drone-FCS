@@ -104,7 +104,9 @@ public:
         for (int i = 0; i < propellers.size(); ++i)
             propellers[i]->render(shader);
         
+        #ifdef DEBUG_MODE
         collider->render(shader);
+        #endif
     }
 
     void setPropellerThrusts(const std::array<float, 4>& thrusts) {
