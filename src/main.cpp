@@ -14,7 +14,7 @@ int main() {
     glm::mat4 proj = glm::perspective(70.0f, app.getAspectRatio(), 1.0f, 3.0f);
     camera.setInputMode(window);
 
-    Simulation sim(glm::vec3(-250.0f), glm::vec3(250.0f), 25.0f, 50.0f, 512, 100);
+    Simulation sim(glm::vec3(-250.0f), glm::vec3(250.0f), 25.0f, 50.0f, 512, 1);
 
     Box box(glm::vec3(-5.0f), glm::vec3(5.0f));
     box.translate({0.0f, 50.0f, 0.0f});
