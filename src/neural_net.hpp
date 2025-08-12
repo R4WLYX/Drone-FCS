@@ -189,9 +189,7 @@ public:
     void initializeHiddenLayers(int numLayers, int neuronsPerLayer) {
         if (numLayers <= 0 || neuronsPerLayer <= 0) return;
 
-        // Keep track of the indices of the neurons in the previous layer
         std::vector<int> prevLayerIndices;
-        // Initially, previous layer is the input neurons (0 .. inputCount-1)
         for (int i = 0; i < inputCount; ++i) {
             prevLayerIndices.push_back(i);
         }
@@ -199,35 +197,20 @@ public:
         for (int layer = 0; layer < numLayers; ++layer) {
             std::vector<int> currentLayerIndices;
 
-            // Add neurons for this layer
             for (int i = 0; i < neuronsPerLayer; ++i) {
                 int newNeuronIdx = addHiddenNeuron();
                 currentLayerIndices.push_back(newNeuronIdx);
             }
 
-            // Connect each neuron in current layer to all neurons in previous layer
             for (int currIdx : currentLayerIndices) {
                 for (int prevIdx : prevLayerIndices) {
                     neurons[currIdx].addInput(prevIdx);
                 }
             }
 
-            // Connect neurons in the previous layer *forward* to the current layer neurons (optional)
-            // (Not strictly necessary if you only use inputs on hidden neurons,
-            // but you can add this for dense feedforward if you want)
-            for (int prevIdx : prevLayerIndices) {
-                for (int currIdx : currentLayerIndices) {
-                    // This adds a connection TO currIdx FROM prevIdx,
-                    // so already done above — no need to add connections here in reverse.
-                    // Skip this step unless you want recurrent connections.
-                }
-            }
-
-            // Update prevLayerIndices to current for next iteration
             prevLayerIndices = currentLayerIndices;
         }
 
-        // Finally connect output neurons to last hidden layer
         int firstOutputIdx = (int)neurons.size() - outputCount;
         for (int outIdx = firstOutputIdx; outIdx < (int)neurons.size(); ++outIdx) {
             for (int hiddenIdx : prevLayerIndices) {
@@ -248,13 +231,11 @@ public:
             return;
         }
 
-        // Forward pass
         for (int idx : order) {
             if (idx >= inputCount)
                 neurons[idx].activate(neurons);
         }
 
-        // Output layer deltas
         int firstOutput = (int)neurons.size() - outputCount;
         for (int i = 0; i < outputCount; ++i) {
             int idx = firstOutput + i;
@@ -262,7 +243,6 @@ public:
             neurons[idx].delta = error * neurons[idx].activationDerivative();
         }
 
-        // Hidden layer deltas
         for (auto it = order.rbegin(); it != order.rend(); ++it) {
             int idx = *it;
             if (idx < inputCount || idx >= firstOutput) continue;
@@ -278,7 +258,6 @@ public:
             neurons[idx].delta = sum * neurons[idx].activationDerivative();
         }
 
-        // Update weights
         for (int idx = inputCount; idx < (int)neurons.size(); ++idx) {
             Neuron& neuron = neurons[idx];
             for (auto& c : neuron.inputs) {
