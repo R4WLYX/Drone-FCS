@@ -17,7 +17,7 @@ int main() {
     Simulation sim(glm::vec3(-250.0f), glm::vec3(250.0f), 25.0f, 50.0f, 512, 100);
 
     Box box(glm::vec3(-5.0f), glm::vec3(5.0f));
-    box.translate({0.0f,    50.0f, 0.0f});
+    box.translate({0.0f, 50.0f, 0.0f});
     box.setColor({1.0f, 0.0f, 0.0f, 0.2f});
 
     shader.bind();
