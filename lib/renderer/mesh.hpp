@@ -96,54 +96,54 @@ public:
         updateModelMatrix();
     }
 
-void rotate(const glm::vec3& eulerDelta) {
-    rotation = glm::quat(eulerDelta) * rotation;
-    updateModelMatrix();
-    updateDirectionVectors();
-}
+    void rotate(const glm::vec3& eulerDelta) {
+        rotation = glm::quat(eulerDelta) * rotation;
+        updateModelMatrix();
+        updateDirectionVectors();
+    }
 
-void rotate(const glm::quat& delta) {
-    rotation = delta * rotation;
-    updateModelMatrix();
-    updateDirectionVectors();
-}
+    void rotate(const glm::quat& delta) {
+        rotation = delta * rotation;
+        updateModelMatrix();
+        updateDirectionVectors();
+    }
 
-void rotateAround(glm::vec3 worldPivot, glm::vec3 eulerAngles) {
-    glm::quat deltaRot = glm::quat(eulerAngles);
-    
-    glm::vec3 offset = position - worldPivot;
-    offset = deltaRot * offset;
-    position = worldPivot + offset;
-    
-    rotation = deltaRot * rotation;
+    void rotateAround(glm::vec3 worldPivot, glm::vec3 eulerAngles) {
+        glm::quat deltaRot = glm::quat(eulerAngles);
+        
+        glm::vec3 offset = position - worldPivot;
+        offset = deltaRot * offset;
+        position = worldPivot + offset;
+        
+        rotation = deltaRot * rotation;
 
-    updateModelMatrix();
-    updateDirectionVectors();
-}
+        updateModelMatrix();
+        updateDirectionVectors();
+    }
 
 
-void rotateAround(glm::vec3 worldPivot, glm::quat deltaRot) {
-    glm::vec3 offset = position - worldPivot;
-    offset = deltaRot * offset;
-    position = worldPivot + offset;
+    void rotateAround(glm::vec3 worldPivot, glm::quat deltaRot) {
+        glm::vec3 offset = position - worldPivot;
+        offset = deltaRot * offset;
+        position = worldPivot + offset;
 
-    rotation = deltaRot * rotation;
+        rotation = deltaRot * rotation;
 
-    updateModelMatrix();
-    updateDirectionVectors();
-}
+        updateModelMatrix();
+        updateDirectionVectors();
+    }
 
-void setRotation(const glm::vec3& eulerAngles) {
-    rotation = glm::quat(eulerAngles);
-    updateModelMatrix();
-    updateDirectionVectors();
-}
+    void setRotation(const glm::vec3& eulerAngles) {
+        rotation = glm::quat(eulerAngles);
+        updateModelMatrix();
+        updateDirectionVectors();
+    }
 
-void setRotation(const glm::quat& newRotation) {
-    rotation = newRotation;
-    updateModelMatrix();
-    updateDirectionVectors();
-}
+    void setRotation(const glm::quat& newRotation) {
+        rotation = newRotation;
+        updateModelMatrix();
+        updateDirectionVectors();
+    }
 
     void scaleBy(const glm::vec3& scaleFactor) {
         scale *= scaleFactor;
