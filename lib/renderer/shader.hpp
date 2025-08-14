@@ -37,13 +37,6 @@ public:
         glDeleteProgram(program);
     }
 
-    std::string readFile(const std::string& path) {
-        std::ifstream file(path.c_str(), std::ios_base::binary);
-        std::ostringstream buf;
-        buf << file.rdbuf();
-        return buf.str();
-    }
-
     void addShader(const std::string& path, unsigned int type) {
         if (path.empty()) return;
         std::string source = readFile(path);
@@ -127,7 +120,13 @@ public:
     void setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
         glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
     }
-    void setUniformMat4fArray(const std::string& name, const glm::mat4* matrices, size_t count) {
+    void setUniformMat2fv(const std::string& name, const glm::mat2* matrices, size_t count) {
+        glUniformMatrix2fv(getUniformLocation(name), static_cast<GLsizei>(count), GL_FALSE, &matrices[0][0][0]);
+    }
+    void setUniformMat3fv(const std::string& name, const glm::mat3* matrices, size_t count) {
+        glUniformMatrix3fv(getUniformLocation(name), static_cast<GLsizei>(count), GL_FALSE, &matrices[0][0][0]);
+    }
+    void setUniformMat4fv(const std::string& name, const glm::mat4* matrices, size_t count) {
         glUniformMatrix4fv(getUniformLocation(name), static_cast<GLsizei>(count), GL_FALSE, &matrices[0][0][0]);
     }
     
@@ -148,4 +147,11 @@ public:
 private:
     unsigned int program;
     std::unordered_map<std::string, int> uniformLocationCache;
+
+    std::string readFile(const std::string& path) {
+        std::ifstream file(path.c_str(), std::ios_base::binary);
+        std::ostringstream buf;
+        buf << file.rdbuf();
+        return buf.str();
+    }
 };

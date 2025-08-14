@@ -41,17 +41,17 @@ public:
     glm::mat4 model;
 
     Mesh(float _vertices[], unsigned int _vertexCount, unsigned int _indices[], unsigned int _indexCount)
-       : position(glm::vec3(0.0f)), rotation(glm::vec3(0.0f)), scale(glm::vec3(1.0f)), color(glm::vec4(1.0f)), cachedModelCount(0)
+        : position(glm::vec3(0.0f)), rotation(glm::vec3(0.0f)), scale(glm::vec3(1.0f)), color(glm::vec4(1.0f)), cachedModelCount(0)
     {
         loadMeshData(_vertices, _vertexCount, _indices, _indexCount);
         centerOrigin();
         generateBuffers();
         updateDirectionVectors();
     }
-    
+
     Mesh(const char *model_file, const glm::vec3& _position, const glm::vec3& _rotation,
-         const glm::vec3& _scale, const glm::vec4& _color)
-       : position(_position), rotation(_rotation), scale(_scale), color(_color), cachedModelCount(0)
+            const glm::vec3& _scale, const glm::vec4& _color)
+        : position(_position), rotation(_rotation), scale(_scale), color(_color), cachedModelCount(0)
     {
         parseOBJ(model_file);
         centerOrigin();
@@ -60,25 +60,25 @@ public:
     }
 
     Mesh(const char *model_file)
-       : Mesh(model_file, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.0f)) {}
+        : Mesh(model_file, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.0f)) {}
 
     Mesh(const char *model_file, const glm::vec3& _position)
-       : Mesh(model_file, _position, glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.0f)) {}
+        : Mesh(model_file, _position, glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.0f)) {}
 
     Mesh(const char *model_file, const glm::vec3& _position, const glm::vec3& _rotation)
-       : Mesh(model_file, _position, _rotation, glm::vec3(1.0f), glm::vec4(1.0f)) {}
+        : Mesh(model_file, _position, _rotation, glm::vec3(1.0f), glm::vec4(1.0f)) {}
 
     Mesh(const char *model_file, const glm::vec3& _position, float _scale)
-       : Mesh(model_file, _position, glm::vec3(0.0f), glm::vec3(_scale), glm::vec4(1.0f)) {}
+        : Mesh(model_file, _position, glm::vec3(0.0f), glm::vec3(_scale), glm::vec4(1.0f)) {}
 
     Mesh(const char *model_file, const glm::vec3& _position, const glm::vec3& _rotation, float _scale)
-       : Mesh(model_file, _position, _rotation, glm::vec3(_scale), glm::vec4(1.0f)) {}
+        : Mesh(model_file, _position, _rotation, glm::vec3(_scale), glm::vec4(1.0f)) {}
 
     Mesh(const char *model_file, glm::vec3 _position, const glm::vec3& _scale)
-       : Mesh(model_file, _position, glm::vec3(0.0f), _scale, glm::vec4(1.0f)) {}
+        : Mesh(model_file, _position, glm::vec3(0.0f), _scale, glm::vec4(1.0f)) {}
 
     Mesh(const char *model_file, const glm::vec3& _position, const glm::vec3& _rotation, const glm::vec4& _scale)
-       : Mesh(model_file, _position, _rotation, _scale, glm::vec4(1.0f)) {}
+        : Mesh(model_file, _position, _rotation, _scale, glm::vec4(1.0f)) {}
 
     ~Mesh() {
         glDeleteVertexArrays(1, &vao);
@@ -96,54 +96,54 @@ public:
         updateModelMatrix();
     }
 
-    void rotate(const glm::vec3& eulerDelta) {
-        rotation = glm::quat(eulerDelta) * rotation;
-        updateModelMatrix();
-        updateDirectionVectors();
-    }
+void rotate(const glm::vec3& eulerDelta) {
+    rotation = glm::quat(eulerDelta) * rotation;
+    updateModelMatrix();
+    updateDirectionVectors();
+}
 
-    void rotate(const glm::quat& delta) {
-        rotation = delta * rotation;
-        updateModelMatrix();
-        updateDirectionVectors();
-    }
+void rotate(const glm::quat& delta) {
+    rotation = delta * rotation;
+    updateModelMatrix();
+    updateDirectionVectors();
+}
+
+void rotateAround(glm::vec3 worldPivot, glm::vec3 eulerAngles) {
+    glm::quat deltaRot = glm::quat(eulerAngles);
     
-    void rotateAround(glm::vec3 worldPivot, glm::vec3 eulerAngles) {
-        glm::quat deltaRot = glm::quat(eulerAngles);
-        
-        glm::vec3 offset = position - worldPivot;
-        offset = deltaRot * offset;
-        position = worldPivot + offset;
-        
-        rotation = deltaRot * rotation;
+    glm::vec3 offset = position - worldPivot;
+    offset = deltaRot * offset;
+    position = worldPivot + offset;
+    
+    rotation = deltaRot * rotation;
 
-        updateModelMatrix();
-        updateDirectionVectors();
-    }
+    updateModelMatrix();
+    updateDirectionVectors();
+}
 
 
-    void rotateAround(glm::vec3 worldPivot, glm::quat deltaRot) {
-        glm::vec3 offset = position - worldPivot;
-        offset = deltaRot * offset;
-        position = worldPivot + offset;
+void rotateAround(glm::vec3 worldPivot, glm::quat deltaRot) {
+    glm::vec3 offset = position - worldPivot;
+    offset = deltaRot * offset;
+    position = worldPivot + offset;
 
-        rotation = deltaRot * rotation;
+    rotation = deltaRot * rotation;
 
-        updateModelMatrix();
-        updateDirectionVectors();
-    }
+    updateModelMatrix();
+    updateDirectionVectors();
+}
 
-    void setRotation(const glm::vec3& eulerAngles) {
-        rotation = glm::quat(eulerAngles);
-        updateModelMatrix();
-        updateDirectionVectors();
-    }
+void setRotation(const glm::vec3& eulerAngles) {
+    rotation = glm::quat(eulerAngles);
+    updateModelMatrix();
+    updateDirectionVectors();
+}
 
-    void setRotation(const glm::quat& newRotation) {
-        rotation = newRotation;
-        updateModelMatrix();
-        updateDirectionVectors();
-    }
+void setRotation(const glm::quat& newRotation) {
+    rotation = newRotation;
+    updateModelMatrix();
+    updateDirectionVectors();
+}
 
     void scaleBy(const glm::vec3& scaleFactor) {
         scale *= scaleFactor;
@@ -243,7 +243,7 @@ public:
         glBindVertexArray(vao);
         shader.setUniform4f("objectColor", color);
         for (const auto& chunkModels : splitModels) {
-            shader.setUniformMat4fArray("models", &chunkModels[0], chunkModels.size());
+            shader.setUniformMat4fv("models", &chunkModels[0], chunkModels.size());
             glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr, chunkModels.size());
         }
         glBindVertexArray(0);
